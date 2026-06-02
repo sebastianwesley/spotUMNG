@@ -1,0 +1,10 @@
+{
+  "publishes": {
+    "thorny-haven-s66y": {
+      "siteUrl": "https://thorny-haven-s66y.here.now/",
+      "claimToken": "30eb65760a1092325a752179e9add623cfe7cf2cefb0f4b451d42d78cbbb1870",
+      "claimUrl": "https://here.now/claim?slug=thorny-haven-s66y&token=30eb65760a1092325a752179e9add623cfe7cf2cefb0f4b451d42d78cbbb1870",
+      "expiresAt": "2026-05-26T01:44:14.440Z"
+    }
+  }
+}
