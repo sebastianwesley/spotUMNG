@@ -48,7 +48,7 @@ export default function HorizontalPlacementGallery() {
               />
             </div>
             <p className="text-center text-muted-foreground max-w-xs text-sm leading-relaxed mb-8">
-              Our structured pipeline transforms raw potential into industry-ready talent, with placements at top international agencies.
+              Our structured pipeline transforms raw potential into industry-ready talent.
             </p>
             <button 
               onClick={() => setShowPlacements(true)}

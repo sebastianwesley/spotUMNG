@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, useMotionValue, animate } from "framer-motion";
 import { Link } from "react-router-dom";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import nessy1Img from "@/assets/nessy1.jpg";
 import nessy2Img from "@/assets/nessy2.jpg";
 import paul1Img from "@/assets/paul1.jpg";
@@ -19,7 +20,7 @@ const featuredModels = [
   },
   {
     id: 3,
-    name: "Goodness",
+    name: "Ezi Goodness",
     image: goodnessImg,
     stats: { height: "5'9\"", agency: "Next London" },
   },
@@ -31,7 +32,7 @@ const featuredModels = [
   },
   {
     id: 5,
-    name: "Victory",
+    name: "Willie Victory",
     image: victoryImg,
     stats: { height: "5'11\"", agency: "Spotlight" },
     profilePath: "/placements/victory",
@@ -46,6 +47,8 @@ const FeaturedModelsGallery = () => {
   const trackRef = useRef<HTMLDivElement>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [constraints, setConstraints] = useState({ left: 0, right: 0 });
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
   
   // Motion value for tracking position
   const x = useMotionValue(0);
@@ -64,6 +67,19 @@ const FeaturedModelsGallery = () => {
     window.addEventListener('resize', updateConstraints);
     return () => window.removeEventListener('resize', updateConstraints);
   }, []);
+
+  // Update button states based on scroll position
+  useEffect(() => {
+    const checkButtons = () => {
+      const currentX = x.get();
+      setCanScrollLeft(currentX < -5);
+      setCanScrollRight(currentX > constraints.left + 5);
+    };
+
+    checkButtons();
+    const unsubscribe = x.on("change", checkButtons);
+    return () => unsubscribe();
+  }, [x, constraints]);
 
   // Handle drag end with momentum
   const handleDragEnd = (_: never, info: { velocity: { x: number }; offset: { x: number } }) => {
@@ -84,17 +100,58 @@ const FeaturedModelsGallery = () => {
     });
   };
 
+  const handleScroll = (direction: "left" | "right") => {
+    if (!containerRef.current || !trackRef.current) return;
+    const currentX = x.get();
+    
+    // Scroll by roughly 1 card width + gap
+    const step = 444; 
+    let targetX = direction === "left" ? currentX + step : currentX - step;
+    
+    // Clamp to constraints
+    targetX = Math.max(constraints.left, Math.min(constraints.right, targetX));
+    
+    animate(x, targetX, {
+      type: "spring",
+      stiffness: 150,
+      damping: 20,
+    });
+  };
+
   return (
     <section className="py-16 lg:py-24 bg-background overflow-hidden">
       <div className="max-w-[1400px] mx-auto px-5 lg:px-[60px]">
         {/* Section Header */}
-        <div className="mb-10 lg:mb-14">
+        <div className="mb-10 lg:mb-14 flex items-center justify-between">
           <h2 className="text-3xl md:text-4xl lg:text-[42px] font-sans font-bold text-foreground leading-tight tracking-tight">
             Featured Models
           </h2>
-          <p className="mt-4 text-base lg:text-lg text-muted-foreground font-sans font-light max-w-2xl">
-            Discover our exceptional talent representing the future of fashion.
-          </p>
+          <div className="flex gap-3">
+            <button
+              onClick={() => handleScroll("left")}
+              disabled={!canScrollLeft}
+              className={`w-12 h-12 rounded-full border-2 border-foreground/30 flex items-center justify-center transition-all duration-300 active:scale-95 ${
+                canScrollLeft 
+                  ? "hover:bg-foreground hover:text-background hover:border-foreground cursor-pointer text-foreground" 
+                  : "opacity-30 cursor-not-allowed text-muted-foreground/60 border-foreground/10"
+              }`}
+              aria-label="Previous models"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => handleScroll("right")}
+              disabled={!canScrollRight}
+              className={`w-12 h-12 rounded-full border-2 border-foreground/30 flex items-center justify-center transition-all duration-300 active:scale-95 ${
+                canScrollRight 
+                  ? "hover:bg-foreground hover:text-background hover:border-foreground cursor-pointer text-foreground" 
+                  : "opacity-30 cursor-not-allowed text-muted-foreground/60 border-foreground/10"
+              }`}
+              aria-label="Next models"
+            >
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -135,45 +192,6 @@ const FeaturedModelsGallery = () => {
                   className="w-full h-full object-cover pointer-events-none"
                   draggable={false}
                 />
-
-                {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
-
-                {/* Model Name - Always Visible */}
-                <div className="absolute bottom-5 left-5 right-5">
-                  <h3 className="text-lg md:text-xl font-sans font-bold text-white mb-1">
-                    {model.name}
-                  </h3>
-                  
-                  {/* Stats - Show on Hover */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ 
-                      opacity: hoveredIndex === index ? 1 : 0,
-                      y: hoveredIndex === index ? 0 : 8
-                    }}
-                    transition={{ duration: 0.25 }}
-                    className="space-y-0.5 text-xs text-white/80 font-sans font-light"
-                  >
-                    <p>{model.stats.height}</p>
-                    <p>{model.stats.agency}</p>
-                  </motion.div>
-                </div>
-
-                {/* Arrow indicator */}
-                <motion.div
-                  className="absolute bottom-5 right-5 text-white"
-                  initial={{ opacity: 0.5 }}
-                  animate={{ 
-                    opacity: hoveredIndex === index ? 1 : 0.5,
-                    x: hoveredIndex === index ? 3 : 0
-                  }}
-                  transition={{ duration: 0.25 }}
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </motion.div>
               </Link>
             </motion.div>
           ))}

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Expand, Camera, ArrowUpRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Expand, Camera, ArrowUpRight, Heart } from "lucide-react";
 
 // Import production images
 import os1 from "@/assets/OS1.jpg";
@@ -50,6 +50,88 @@ const ProductionsPreview = () => {
   const [isHovered, setIsHovered] = useState(false);
   
   const imageIndex = Math.abs(page % productions.length);
+
+  // Live heart reaction state
+  const [reactions, setReactions] = useState<Record<number, { count: number; liked: boolean }>>({});
+  const [floatingHearts, setFloatingHearts] = useState<{ id: number; x: number }[]>([]);
+
+  // Initialize reactions from localStorage or realistic base counts
+  useEffect(() => {
+    const initialReactions: Record<number, { count: number; liked: boolean }> = {};
+    productions.forEach((prod) => {
+      const baseCount = 80 + ((prod.id * 37) % 150) + ((prod.id * 13) % 35);
+      const storedLiked = localStorage.getItem(`spotlight_liked_${prod.id}`) === "true";
+      const storedCount = localStorage.getItem(`spotlight_likes_${prod.id}`);
+
+      initialReactions[prod.id] = {
+        count: storedCount ? parseInt(storedCount, 10) : baseCount,
+        liked: storedLiked,
+      };
+
+      if (!storedCount) {
+        localStorage.setItem(`spotlight_likes_${prod.id}`, String(baseCount));
+      }
+    });
+    setReactions(initialReactions);
+  }, []);
+
+  // Simulate live background reactions from other visitors
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (Math.random() > 0.6) {
+        const randomIdx = Math.floor(Math.random() * productions.length);
+        const prodId = productions[randomIdx].id;
+
+        setReactions((prev) => {
+          if (!prev[prodId]) return prev;
+          const current = prev[prodId];
+          const newCount = current.count + 1;
+          localStorage.setItem(`spotlight_likes_${prodId}`, String(newCount));
+          return {
+            ...prev,
+            [prodId]: {
+              ...current,
+              count: newCount,
+            },
+          };
+        });
+      }
+    }, 8000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleLike = (prodId: number) => {
+    setReactions((prev) => {
+      const current = prev[prodId] || { count: 120, liked: false };
+      const nextLiked = !current.liked;
+      const nextCount = current.count + (nextLiked ? 1 : -1);
+
+      localStorage.setItem(`spotlight_liked_${prodId}`, String(nextLiked));
+      localStorage.setItem(`spotlight_likes_${prodId}`, String(nextCount));
+
+      if (nextLiked) {
+        // Spawn multiple floating hearts with random x offsets
+        const newHearts = Array.from({ length: 6 }).map((_, i) => ({
+          id: Date.now() + i + Math.random(),
+          x: (Math.random() - 0.5) * 120, // scatter horizontally over the image
+        }));
+        setFloatingHearts((fHearts) => [...fHearts, ...newHearts]);
+
+        setTimeout(() => {
+          setFloatingHearts((fHearts) => fHearts.filter((h) => !newHearts.some((nh) => nh.id === h.id)));
+        }, 1500);
+      }
+
+      return {
+        ...prev,
+        [prodId]: {
+          count: nextCount,
+          liked: nextLiked,
+        },
+      };
+    });
+  };
 
   const paginate = (newDirection: number) => {
     setPage([page + newDirection, newDirection]);
@@ -149,7 +231,11 @@ const ProductionsPreview = () => {
                 className="absolute inset-0 cursor-grab active:cursor-grabbing flex items-center justify-center"
               >
                 {/* Tightly Fitted Frame */}
-                <div className="relative max-h-full max-w-[95vw] shadow-[0_0_120px_rgba(0,0,0,0.8)] flex rounded-sm overflow-hidden">
+                <div 
+                  onMouseEnter={() => setIsHovered(true)}
+                  onMouseLeave={() => setIsHovered(false)}
+                  className="relative max-h-full max-w-[95vw] shadow-[0_0_120px_rgba(0,0,0,0.8)] flex rounded-sm overflow-hidden group/frame"
+                >
                   <div className="absolute inset-0 border border-white/10 z-10 pointer-events-none"></div>
                   <img
                     src={productions[imageIndex].image}
@@ -158,6 +244,30 @@ const ProductionsPreview = () => {
                     draggable="false"
                   />
                   
+                  {/* Floating Hearts Animation overlayed in center of image */}
+                  <div className="absolute inset-0 pointer-events-none flex items-center justify-center z-30">
+                    <AnimatePresence>
+                      {floatingHearts.map((heart) => (
+                        <motion.div
+                          key={heart.id}
+                          initial={{ y: 80, opacity: 0, scale: 0.5 }}
+                          animate={{
+                            y: -180 - Math.random() * 120,
+                            x: heart.x,
+                            opacity: [0, 1, 1, 0],
+                            scale: [0.5, 1.4, 1.4, 0.8],
+                            rotate: (Math.random() - 0.5) * 80,
+                          }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 1.5, ease: "easeOut" }}
+                          className="absolute text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.7)]"
+                        >
+                          <Heart size={32} className="fill-current" />
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  </div>
+
                   {/* Subtle Interactive Overlay */}
                   <motion.div 
                     initial={{ opacity: 0 }}
@@ -166,6 +276,39 @@ const ProductionsPreview = () => {
                   >
                     <Expand className="text-white/40" size={40} strokeWidth={0.5} />
                   </motion.div>
+
+                  {/* Floating Live Heart Button on Image */}
+                  <div 
+                    onPointerDown={(e) => e.stopPropagation()}
+                    className="absolute bottom-4 right-4 z-20"
+                  >
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleLike(productions[imageIndex].id);
+                      }}
+                      className={`flex items-center justify-center w-12 h-12 rounded-full backdrop-blur-md transition-all duration-300 shadow-lg border active:scale-90 group/heart cursor-pointer ${
+                        reactions[productions[imageIndex].id]?.liked
+                          ? "bg-red-500/20 border-red-500/40 text-red-500 hover:bg-red-500/30"
+                          : "bg-black/50 border-white/10 text-white/80 hover:text-white hover:border-red-500/40 hover:bg-black/75"
+                      }`}
+                      title="Love this photo"
+                    >
+                      <motion.div
+                        animate={{ scale: reactions[productions[imageIndex].id]?.liked ? [1, 1.4, 1] : 1 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <Heart
+                          size={20}
+                          className={`transition-colors duration-300 ${
+                            reactions[productions[imageIndex].id]?.liked
+                              ? "fill-red-500 stroke-red-500"
+                              : "stroke-current fill-none group-hover/heart:text-red-500"
+                          }`}
+                        />
+                      </motion.div>
+                    </button>
+                  </div>
                 </div>
               </motion.div>
             </AnimatePresence>
@@ -188,14 +331,24 @@ const ProductionsPreview = () => {
 
         {/* Footer Info Panel */}
         <div className="mt-12 lg:mt-16 grid lg:grid-cols-12 gap-8 items-start">
-          <div className="lg:col-span-8">
+          <div className="lg:col-span-8 flex flex-col md:flex-row md:items-center justify-between gap-6 w-full">
             <motion.div
               key={`info-${page}`}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="pt-2"
+              className="pt-2 flex-1"
             >
-              <div className="flex items-center">
+              <span className="text-xs uppercase tracking-[0.2em] text-white/40 block mb-1">
+                {productions[imageIndex].category} · {productions[imageIndex].year}
+              </span>
+            </motion.div>
+            
+            <div className="flex flex-wrap items-center gap-4">
+              <motion.div
+                key={`photographer-${page}`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
                 <a
                   href="https://instagram.com/_signature_pictures_"
                   target="_blank"
@@ -219,8 +372,45 @@ const ProductionsPreview = () => {
                     <ArrowUpRight size={14} />
                   </div>
                 </a>
-              </div>
-            </motion.div>
+              </motion.div>
+
+              {/* Heart Reaction Button in Footer */}
+              <motion.button
+                key={`react-btn-${page}`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={() => handleLike(productions[imageIndex].id)}
+                className={`inline-flex items-center gap-3.5 px-6 py-3.5 rounded-full backdrop-blur-md border transition-all duration-300 hover:scale-105 active:scale-98 group/react shadow-soft cursor-pointer ${
+                  reactions[productions[imageIndex].id]?.liked
+                    ? "bg-red-500/10 border-red-500/30 text-red-500"
+                    : "bg-white/5 border-white/10 text-white/85 hover:text-white hover:border-red-500/30"
+                }`}
+                title="React to this photo"
+              >
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm ${
+                  reactions[productions[imageIndex].id]?.liked
+                    ? "bg-red-500 text-white"
+                    : "bg-white/10 text-white/70 group-hover/react:bg-red-500/20 group-hover/react:text-red-500"
+                }`}>
+                  <Heart
+                    size={14}
+                    className={`transition-transform duration-300 ${
+                      reactions[productions[imageIndex].id]?.liked ? "scale-110 fill-current" : "group-hover/react:scale-110"
+                    }`}
+                  />
+                </div>
+                
+                <div className="text-left flex flex-col justify-center min-w-[3.5rem]">
+                  <span className="text-[9px] uppercase tracking-[0.25em] text-white/40 block font-light leading-none mb-1">
+                    Reactions
+                  </span>
+                  <span className="text-xs uppercase tracking-wider font-semibold font-sans block leading-none">
+                    {reactions[productions[imageIndex].id]?.count || 0}
+                  </span>
+                </div>
+              </motion.button>
+            </div>
           </div>
           
           <div className="lg:col-span-4 flex lg:justify-end gap-2">

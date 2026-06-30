@@ -22,7 +22,7 @@ const models = [
   },
   {
     id: 3,
-    name: "Goodness",
+    name: "Ezi Goodness",
     image: goodnessImg,
     stats: { height: "5'9\"", city: "London" },
     type: "Women",
@@ -36,7 +36,7 @@ const models = [
   },
   {
     id: 5,
-    name: "Victory",
+    name: "Willie Victory",
     image: victoryImg,
     stats: { height: "5'11\"", city: "Lagos" },
     type: "Women",

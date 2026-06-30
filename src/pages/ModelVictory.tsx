@@ -11,10 +11,10 @@ import olv2 from "@/assets/OLV2.jpg";
 import olv3 from "@/assets/OLV3.jpg";
 
 const galleryImages = [
-  { src: portraitImage, alt: "Victory - Portrait", brand: "Portrait" },
-  { src: olv1, alt: "Victory - Editorial", brand: "Editorial" },
-  { src: olv2, alt: "Victory - Campaign", brand: "Campaign" },
-  { src: olv3, alt: "Victory - Editorial", brand: "Editorial" },
+  { src: portraitImage, alt: "Willie Victory - Portrait", brand: null },
+  { src: olv1, alt: "Willie Victory - Editorial", brand: null },
+  { src: olv2, alt: "Willie Victory - Campaign", brand: null },
+  { src: olv3, alt: "Willie Victory - Editorial", brand: null },
 ];
 
 const ModelVictory = forwardRef<HTMLDivElement>((_, ref) => {
@@ -29,13 +29,13 @@ const ModelVictory = forwardRef<HTMLDivElement>((_, ref) => {
   return (
     <div ref={ref}>
       <Helmet>
-        <title>Victory | Spotlight Models</title>
+        <title>Willie Victory | Spotlight Models</title>
         <meta
           name="description"
-          content="Model profile for Victory - Height: 5ft11, Hair: Black, Eyes: Brown. Scouted and developed by Spotlight."
+          content="Model profile for Willie Victory - Height: 5ft11, Hair: Black, Eyes: Brown. Scouted and developed by Spotlight."
         />
-        <meta property="og:title" content="Victory | Spotlight Models" />
-        <meta property="og:description" content="Discover Victory, a rising star scouted and developed by Spotlight." />
+        <meta property="og:title" content="Willie Victory | Spotlight Models" />
+        <meta property="og:description" content="Discover Willie Victory, a rising star scouted and developed by Spotlight." />
         <meta property="og:type" content="website" />
       </Helmet>
 
@@ -51,8 +51,8 @@ const ModelVictory = forwardRef<HTMLDivElement>((_, ref) => {
             transition={{ duration: 0.7 }}
             className="text-center mb-12 px-6"
           >
-            <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl text-foreground tracking-wide uppercase">
-              Victory
+            <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-foreground tracking-wide uppercase">
+              Willie Victory
             </h1>
           </motion.div>
 
@@ -86,7 +86,7 @@ const ModelVictory = forwardRef<HTMLDivElement>((_, ref) => {
               transition={{ delay: 0.5 }}
               className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground text-center mb-6"
             >
-              Victory
+              Willie Victory
             </motion.p>
             
             <div className="flex md:grid overflow-x-auto md:overflow-x-visible snap-x md:snap-none md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-6 pb-4 scrollbar-hide">
@@ -144,13 +144,13 @@ const ModelVictory = forwardRef<HTMLDivElement>((_, ref) => {
               className="bg-card/50 backdrop-blur-sm rounded-2xl p-8 border border-border/30"
             >
               <h2 className="font-serif text-2xl md:text-3xl text-foreground mb-6 text-center">
-                Victory
+                Willie Victory
               </h2>
 
               {/* Bio Section */}
               <div className="mb-8">
                 <p className="text-muted-foreground leading-relaxed text-center font-light leading-relaxed">
-                  Scouted and developed by Spotlight, Victory is a rising talent known for her strong presence, high-fashion versatility, and compelling editorial expression. Featuring a striking profile and exceptional composure, she is built for both commercial campaigns and editorial runway stories.
+                  Scouted and developed by Spotlight, Willie Victory is a rising talent known for her strong presence, high-fashion versatility, and compelling editorial expression. Featuring a striking profile and exceptional composure, she is built for both commercial campaigns and editorial runway stories.
                 </p>
               </div>
 

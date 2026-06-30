@@ -16,8 +16,8 @@ const updates = [
   },
   {
     id: 3,
-    title: "Introducing Digital Portfolio Sessions",
-    description: "We are excited to launch our new digital portfolio sessions. This streamlined experience makes it easier than ever for global brands, models and agencies to acquire portfolio and all booking assets.",
+    title: "Building Our Vision",
+    description: "We are actively building our upcoming production structure and network. Driven by our vision to bridge global opportunities, we are constructing a next-generation platform for models and fashion creatives.",
     date: "March 2026",
   },
 ];

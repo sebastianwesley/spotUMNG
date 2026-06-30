@@ -34,18 +34,6 @@ const features = [
     description: "SpotlightU produces fashion-forward content for portfolios, campaigns, and social media.",
     href: "/productions"
   },
-  {
-    lettermark: "CD",
-    title: "Casting Directors",
-    description: "Our team curates perfect fits for brands, events, and fashion productions worldwide.",
-    href: "/book"
-  },
-  {
-    lettermark: "AC",
-    title: "Artistic Creative",
-    description: "Explore our archive of high-end fashion productions and creative collaborations.",
-    href: "/productions"
-  },
 ];
 
 const FeaturesSection = () => {
@@ -86,7 +74,7 @@ const FeaturesSection = () => {
         </div>
 
         {/* Features Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
           {features.map((feature, index) => (
             <Link
               key={feature.title}

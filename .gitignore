@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# here.now local state and credentials
+.herenow
+.herenow/*
+

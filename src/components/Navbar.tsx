@@ -71,6 +71,7 @@ const Navbar = forwardRef<HTMLDivElement>((_, ref) => {
               {/* Logo */}
               <Link
                 to="/"
+                onClick={() => setIsOpen(false)}
                 className="group flex items-center z-50"
               >
                 <span className={`text-xl lg:text-2xl font-bold tracking-tight transition-all duration-300 group-hover:opacity-80 ${
@@ -133,6 +134,7 @@ const Navbar = forwardRef<HTMLDivElement>((_, ref) => {
               <Link
                 key={link.name}
                 to={link.href}
+                onClick={() => setIsOpen(false)}
                 className={`block py-3 md:py-4 text-lg md:text-2xl lg:text-3xl font-light transition-all duration-300 tracking-wide ${
                   location.pathname === link.href 
                     ? "text-background font-medium" 

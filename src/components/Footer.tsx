@@ -83,7 +83,7 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
         {/* Bottom Bar */}
         <div className="py-6 border-t border-background/10 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-background/60">
-            © {new Date().getFullYear()} SpotlightU
+            © Est2020 SpotlightU
           </p>
 
           <div className="flex items-center gap-6">

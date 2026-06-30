@@ -3,6 +3,49 @@ import path from 'path';
 import crypto from 'crypto';
 import os from 'os';
 import qrcode from 'qrcode-terminal';
+import https from 'https';
+
+function httpsFetch(url, options = {}) {
+  return new Promise((resolve, reject) => {
+    const headers = { ...options.headers };
+    let body = options.body;
+    
+    if (body && typeof body === 'object' && !Buffer.isBuffer(body)) {
+      body = JSON.stringify(body);
+      headers['content-type'] = headers['content-type'] || 'application/json';
+    }
+    
+    if (body) {
+      headers['content-length'] = Buffer.isBuffer(body) ? body.length : Buffer.byteLength(body);
+    }
+    
+    const reqOptions = {
+      method: options.method || 'GET',
+      headers: headers,
+    };
+    
+    const req = https.request(url, reqOptions, (res) => {
+      let data = [];
+      res.on('data', (chunk) => data.push(chunk));
+      res.on('end', () => {
+        const buf = Buffer.concat(data);
+        resolve({
+          status: res.statusCode,
+          statusText: res.statusMessage,
+          json: async () => JSON.parse(buf.toString('utf8')),
+          text: async () => buf.toString('utf8')
+        });
+      });
+    });
+    
+    req.on('error', (err) => reject(err));
+    if (body) {
+      req.write(body);
+    }
+    req.end();
+  });
+}
+
 
 const TARGET_DIR = path.resolve('dist');
 const BASE_URL = 'https://here.now';
@@ -118,10 +161,10 @@ async function run() {
   let attempts = 5;
   while (attempts > 0) {
     try {
-      publishResponse = await fetch(`${BASE_URL}/api/v1/publish`, {
+      publishResponse = await httpsFetch(`${BASE_URL}/api/v1/publish`, {
         method: 'POST',
         headers,
-        body: JSON.stringify(requestBody)
+        body: requestBody
       });
       break;
     } catch (err) {
@@ -166,7 +209,7 @@ async function run() {
     let attempts = 10;
     while (attempts > 0) {
       try {
-        const uploadResponse = await fetch(upload.url, {
+        const uploadResponse = await httpsFetch(upload.url, {
           method: 'PUT',
           headers: putHeaders,
           body: fileBuffer
@@ -194,10 +237,10 @@ async function run() {
   let finalizeAttempts = 5;
   while (finalizeAttempts > 0) {
     try {
-      finalizeResponse = await fetch(finalizeUrl, {
+      finalizeResponse = await httpsFetch(finalizeUrl, {
         method: 'POST',
         headers,
-        body: JSON.stringify({ versionId })
+        body: { versionId }
       });
       break;
     } catch (err) {
