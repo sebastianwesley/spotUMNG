@@ -189,7 +189,9 @@ const FeaturedModelsGallery = () => {
                 <img
                   src={model.image}
                   alt={model.name}
-                  className="w-full h-full object-cover pointer-events-none"
+                  className={`w-full h-full object-cover pointer-events-none transition-all duration-700 ${
+                    hoveredIndex === index ? "scale-105 grayscale-0" : "scale-100 grayscale"
+                  }`}
                   draggable={false}
                 />
               </Link>

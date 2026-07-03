@@ -61,7 +61,7 @@ const Placements = () => {
         <title>Placements | SpotlightU</title>
         <meta
           name="description"
-          content="Discover our successfully placed models who have transitioned to top mother agencies worldwide."
+          content="Discover the models scouted by Spotlight and successfully placed with leading agencies worldwide."
         />
       </Helmet>
 
@@ -79,7 +79,7 @@ const Placements = () => {
               Our Placements
             </h1>
             <p className="text-muted-foreground text-lg max-w-xl mx-auto font-light">
-              Rising stars we've scouted and successfully transitioned to top campaigns worldwide.
+              Discover the models scouted by Spotlight and successfully placed.
             </p>
             <p className="text-muted-foreground/60 text-sm mt-4 italic">
               Click to spotlight • Click again to explore

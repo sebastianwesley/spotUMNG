@@ -119,7 +119,7 @@ const DiscoveryToPlacement = () => {
           transition={{ duration: 0.8, ease: [0.4, 0.0, 0.2, 1], delay: 0.4 }}
           className="mt-8 md:mt-12 text-muted-foreground text-base md:text-lg max-w-2xl mx-auto"
         >
-          Our journey began in 2023 with a single mission: to discover the undiscovered. Today, we are proud to have scouted and transitioned a roster of rising stars into the hands of reputable mother agents.
+          Our journey began in 2023 with a single mission: to discover the undiscovered. Today, we are proud to have scouted these models into the spotlight and successfully placed them with leading agencies worldwide.
         </motion.p>
 
         <motion.div

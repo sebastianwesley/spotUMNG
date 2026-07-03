@@ -27,7 +27,7 @@ const HeroSection = () => {
               isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
             }`}
           >
-            Discovering Exceptional Talents
+            transition from darkness to light
           </p>
 
           {/* Decorative Line */}
