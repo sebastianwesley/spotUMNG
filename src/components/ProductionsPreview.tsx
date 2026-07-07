@@ -55,57 +55,25 @@ const ProductionsPreview = () => {
   const [reactions, setReactions] = useState<Record<number, { count: number; liked: boolean }>>({});
   const [floatingHearts, setFloatingHearts] = useState<{ id: number; x: number }[]>([]);
 
-  // Initialize reactions from localStorage or realistic base counts
+  // Initialize reactions from localStorage (user actions only)
   useEffect(() => {
     const initialReactions: Record<number, { count: number; liked: boolean }> = {};
     productions.forEach((prod) => {
-      const baseCount = 80 + ((prod.id * 37) % 150) + ((prod.id * 13) % 35);
       const storedLiked = localStorage.getItem(`spotlight_liked_${prod.id}`) === "true";
-      const storedCount = localStorage.getItem(`spotlight_likes_${prod.id}`);
 
       initialReactions[prod.id] = {
-        count: storedCount ? parseInt(storedCount, 10) : baseCount,
+        count: storedLiked ? 1 : 0,
         liked: storedLiked,
       };
-
-      if (!storedCount) {
-        localStorage.setItem(`spotlight_likes_${prod.id}`, String(baseCount));
-      }
     });
     setReactions(initialReactions);
   }, []);
 
-  // Simulate live background reactions from other visitors
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (Math.random() > 0.6) {
-        const randomIdx = Math.floor(Math.random() * productions.length);
-        const prodId = productions[randomIdx].id;
-
-        setReactions((prev) => {
-          if (!prev[prodId]) return prev;
-          const current = prev[prodId];
-          const newCount = current.count + 1;
-          localStorage.setItem(`spotlight_likes_${prodId}`, String(newCount));
-          return {
-            ...prev,
-            [prodId]: {
-              ...current,
-              count: newCount,
-            },
-          };
-        });
-      }
-    }, 8000);
-
-    return () => clearInterval(interval);
-  }, []);
-
   const handleLike = (prodId: number) => {
     setReactions((prev) => {
-      const current = prev[prodId] || { count: 120, liked: false };
+      const current = prev[prodId] || { count: 0, liked: false };
       const nextLiked = !current.liked;
-      const nextCount = current.count + (nextLiked ? 1 : -1);
+      const nextCount = nextLiked ? 1 : 0;
 
       localStorage.setItem(`spotlight_liked_${prodId}`, String(nextLiked));
       localStorage.setItem(`spotlight_likes_${prodId}`, String(nextCount));

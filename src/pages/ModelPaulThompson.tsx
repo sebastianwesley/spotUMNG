@@ -10,9 +10,9 @@ import paul2Image from "@/assets/paul2.jpg";
 import paul3Image from "@/assets/paul3.jpg";
 
 const galleryImages = [
-  { src: paul1Image, alt: "Paul Thompson - Portrait", brand: "Portrait" },
-  { src: paul2Image, alt: "Paul Thompson - Editorial", brand: "Editorial" },
-  { src: paul3Image, alt: "Paul Thompson - Campaign", brand: "Campaign" },
+  { src: paul1Image, alt: "Paul Thompson - Portrait", brand: null },
+  { src: paul2Image, alt: "Paul Thompson - Editorial", brand: null },
+  { src: paul3Image, alt: "Paul Thompson - Campaign", brand: null },
 ];
 
 const ModelPaulThompson = forwardRef<HTMLDivElement>((_, ref) => {

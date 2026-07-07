@@ -117,7 +117,7 @@ const ImageLightbox = ({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="mt-4 text-white/80 text-sm uppercase tracking-widest"
+                className="mt-4 text-white/80 text-sm tracking-widest whitespace-pre-line"
               >
                 {currentImage.brand}
               </motion.p>

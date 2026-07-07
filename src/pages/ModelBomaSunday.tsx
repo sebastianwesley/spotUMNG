@@ -18,8 +18,8 @@ const galleryImages = [
   { src: bomaImage, alt: "Boma Sunday - Portrait", brand: null },
   { src: bomaEditorial1, alt: "Boma Sunday - Self Service", brand: null },
   { src: bomaSnow, alt: "Boma Sunday - T Magazine Radically Simple", brand: "T: The New York Times Style Magazine – Radically Simple" },
-  { src: bomaArmani, alt: "Boma Sunday - Beyond Noise", brand: "Beyond Noise: Photography by Robin Galiegue" },
-  { src: bomaEditorial2, alt: "Boma Sunday - T Magazine", brand: "T: The New York Times Style Magazine" },
+  { src: bomaArmani, alt: "Boma Sunday - Beyond Noise", brand: "Photography Robin Galiegue\nBeyond Noise (Editorial)\n10/24/2025\nphotographer: Robin Galiegue" },
+  { src: bomaEditorial2, alt: "Boma Sunday - Self Service", brand: "Self Service\nThe Obsessions by Mark Kean\nSource: selfservicemagazine.com\nPublished: 10/07/2025" },
   { src: bomaDuo, alt: "Boma Sunday - T Magazine Radically Simple", brand: "T: The New York Times Style Magazine – Radically Simple" },
   { src: bomaBackstage, alt: "Boma Sunday - Backstage", brand: null },
 ];
@@ -116,7 +116,7 @@ const ModelBomaSunday = forwardRef<HTMLDivElement>((_, ref) => {
                     />
                     {image.brand && (
                       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4">
-                        <span className="text-white text-[10px] uppercase tracking-[0.15em] font-medium">
+                        <span className="text-white text-[10px] tracking-[0.15em] font-medium whitespace-pre-line">
                           {image.brand}
                         </span>
                       </div>

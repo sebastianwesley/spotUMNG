@@ -36,7 +36,7 @@ const AboutFull = () => {
             Spotlight
           </h1>
           <p className="font-sans text-xs md:text-sm tracking-[0.3em] uppercase text-muted-foreground mt-2">
-            Management · Production · Scouting
+            Scouting · Development · Management · Production
           </p>
         </motion.div>
 

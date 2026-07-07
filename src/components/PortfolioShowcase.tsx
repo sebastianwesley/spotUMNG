@@ -160,7 +160,7 @@ const PortfolioShowcase = () => {
               className="text-center mt-8"
             >
               <p className="text-muted-foreground text-xs md:text-sm tracking-[0.2em] uppercase font-light max-w-3xl mx-auto leading-relaxed">
-                A curated selection of refined faces who have successfully completed our signature, elite development programs. Specially trained in high-fashion posing, runway precision, and professional poise, they represent the next generation of global fashion talent.
+                These models have successfully completed our Open Development Program and are ready to shine in the spotlight.
               </p>
             </motion.div>
           )}
