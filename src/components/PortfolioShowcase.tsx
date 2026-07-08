@@ -154,13 +154,14 @@ const PortfolioShowcase = () => {
           
           {/* Section Description */}
           {activeCategory === "Developed Models" && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-center mt-8"
+              className="text-center mt-8 space-y-2"
             >
               <p className="text-muted-foreground text-xs md:text-sm tracking-[0.2em] uppercase font-light max-w-3xl mx-auto leading-relaxed">
-                These models have successfully completed our Open Development Program and are ready to shine in the spotlight.
+                Spotlight runs an <span className="text-foreground font-medium">Open Model Development Session</span> — these models went through our{" "}
+                <span className="text-foreground font-medium">Model Development Program</span>.
               </p>
             </motion.div>
           )}
