@@ -5,9 +5,9 @@ import Footer from "@/components/Footer";
 import ImageLightbox from "@/components/ImageLightbox";
 import { motion } from "framer-motion";
 import { Instagram, ExternalLink } from "lucide-react";
-import paul1Image from "@/assets/paul1.jpg";
-import paul2Image from "@/assets/paul2.jpg";
-import paul3Image from "@/assets/paul3.jpg";
+import paul1Image from "@/assets/paul1.webp";
+import paul2Image from "@/assets/paul2.webp";
+import paul3Image from "@/assets/paul3.webp";
 
 const galleryImages = [
   { src: paul1Image, alt: "Paul Thompson - Portrait", brand: null },

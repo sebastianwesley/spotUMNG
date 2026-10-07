@@ -5,11 +5,11 @@ import Footer from "@/components/Footer";
 import ImageLightbox from "@/components/ImageLightbox";
 import { motion } from "framer-motion";
 import { Instagram, ExternalLink } from "lucide-react";
-import portraitImage from "@/assets/success-nwokocha-portrait.jpg";
-import success121 from "@/assets/success 121.jpg";
-import success122 from "@/assets/success 122.jpg";
-import success123 from "@/assets/success123.jpg";
-import success124 from "@/assets/success-124.jpg";
+import portraitImage from "@/assets/success-nwokocha-portrait.webp";
+import success121 from "@/assets/success 121.webp";
+import success122 from "@/assets/success 122.webp";
+import success123 from "@/assets/success123.webp";
+import success124 from "@/assets/success-124.webp";
 
 const galleryImages = [
   { src: portraitImage, alt: "Nwokocha Success - Portrait", brand: null },

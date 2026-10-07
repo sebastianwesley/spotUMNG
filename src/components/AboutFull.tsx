@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import abt1 from "@/assets/abt1.jpg";
-import abt4 from "@/assets/abt4.jpg";
-import abt5 from "@/assets/abt5.jpg";
-import pillar1 from "@/assets/pillar1.jpg";
+import abt1 from "@/assets/abt1.webp";
+import abt4 from "@/assets/abt4.webp";
+import abt5 from "@/assets/abt5.webp";
+import pillar1 from "@/assets/pillar1.webp";
 
 const AboutFull = () => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);

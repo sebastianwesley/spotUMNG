@@ -1,4 +1,4 @@
-import spotlightLogo from "@/assets/spotlight-logo-watermark.jpg";
+import spotlightLogo from "@/assets/spotlight-logo-watermark.webp";
 
 interface LogoWatermarkProps {
   className?: string;

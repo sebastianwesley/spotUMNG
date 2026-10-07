@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ExternalLink, X } from 'lucide-react';
-import discoveryImage from '@/assets/discovery-to-placement.jpg';
-import successImage from '@/assets/success-nwokocha.jpg';
-import bomaImage from '@/assets/boma-sunday.jpg';
+import discoveryImage from '@/assets/discovery-to-placement.webp';
+import successImage from '@/assets/success-nwokocha.webp';
+import bomaImage from '@/assets/boma-sunday.webp';
 
 const placedModels = [
   {

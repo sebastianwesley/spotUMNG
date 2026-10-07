@@ -5,8 +5,8 @@ import Footer from "@/components/Footer";
 import ImageLightbox from "@/components/ImageLightbox";
 import { motion } from "framer-motion";
 import { Instagram, ExternalLink } from "lucide-react";
-import genevieveImage from "@/assets/Genevieve.jpg";
-import gene1Image from "@/assets/gene1.jpg";
+import genevieveImage from "@/assets/Genevieve.webp";
+import gene1Image from "@/assets/gene1.webp";
 
 const galleryImages = [
   { src: genevieveImage, alt: "Usoh Ifeanyi Chukwulanigam - Portrait", brand: "Portrait" },
