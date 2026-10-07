@@ -1,3 +1,6 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { supabase } from "@/lib/supabaseClient";
+
 export interface NotifiableApplication {
   id?: string;
   firstName?: string;
@@ -11,50 +14,33 @@ export interface NotifyResult {
   error?: string;
 }
 
-const env = (import.meta.env ?? {}) as Record<string, string | undefined>;
-
-/** Generic webhook first, then the two chat-webhook flavours. */
-const webhookUrl = () =>
-  env.VITE_APPLICATION_WEBHOOK_URL ||
-  env.VITE_DISCORD_WEBHOOK_URL ||
-  env.VITE_SLACK_WEBHOOK_URL ||
-  "";
+const FUNCTION_NAME = "notify-new-application";
 
 /**
  * Fire-and-forget alert that a new application landed. Never throws: a missing
- * webhook or a failing endpoint must not affect the applicant's submission.
+ * Supabase config or a failing Edge Function must not affect the applicant's
+ * submission. The email itself is sent by the `notify-new-application` Edge
+ * Function (credentials live only in Supabase secrets, not in this bundle).
  */
 export async function notifyNewApplication(
-  application: NotifiableApplication
+  application: NotifiableApplication,
+  client: SupabaseClient | null = supabase
 ): Promise<NotifyResult> {
-  const url = webhookUrl();
-  if (!url) return { ok: false, error: "no webhook configured" };
-
-  const name =
-    [application?.firstName, application?.lastName].filter(Boolean).join(" ").trim() ||
-    "Unknown applicant";
-  const email = application?.email || "unknown";
-  const timestamp = new Date().toISOString();
-  const summary = `New model application — ${name} (${email})`;
-
-  // `text`/`content` satisfy Slack/Discord; the structured fields serve a
-  // generic webhook.
-  const payload = {
-    text: summary,
-    content: summary,
-    event: "new_application",
-    applicant: { id: application?.id ?? null, name, email },
-    timestamp,
-  };
+  if (!client) return { ok: false, error: "supabase not configured" };
 
   try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+    const { error } = await client.functions.invoke(FUNCTION_NAME, {
+      body: {
+        firstName: application?.firstName,
+        lastName: application?.lastName,
+        email: application?.email,
+        age: application?.age,
+        height: application?.height,
+        location: application?.location,
+      },
     });
 
-    if (!response.ok) return { ok: false, error: `webhook responded ${response.status}` };
+    if (error) return { ok: false, error: error.message };
     return { ok: true };
   } catch (error) {
     return { ok: false, error: error instanceof Error ? error.message : String(error) };

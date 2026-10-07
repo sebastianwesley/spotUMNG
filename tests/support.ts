@@ -94,7 +94,10 @@ export function createSupabaseStub(overrides: {
   signInSession?: unknown;
   signInError?: unknown;
   probeError?: unknown;
+  /** Edge Functions surface: records function invocations (name + body). */
+  functionsInvoke?: (name: string, body: unknown) => Promise<unknown>;
 }) {
+  const functionInvocations: Array<{ name: string; body: unknown }> = [];
   const uploads: Array<{ bucket: string; path: string; file: unknown; options?: unknown }> = [];
   const removedPaths: string[] = [];
   const publicUrlCalls: string[] = [];
@@ -236,6 +239,14 @@ export function createSupabaseStub(overrides: {
     },
   };
 
+  const functions = {
+    async invoke(name: string, options: { body?: unknown }) {
+      functionInvocations.push({ name, body: options?.body });
+      if (overrides.functionsInvoke) return await overrides.functionsInvoke(name, options?.body);
+      return { data: { ok: true }, error: null };
+    },
+  };
+
   const stub = {
     from(table: string) {
       scope = null;
@@ -243,6 +254,7 @@ export function createSupabaseStub(overrides: {
       record("from", [table]);
       return tableBuilder;
     },
+    functions,
     rpc(name: string, _args?: unknown) {
       scope = "select";
       (stub as any).lastRpc = name;
@@ -257,5 +269,16 @@ export function createSupabaseStub(overrides: {
     auth,
   };
 
-  return { stub, uploads, removedPaths, publicUrlCalls, signedUrlCalls, authCalls, inserts, updates, calls };
+  return {
+    stub,
+    uploads,
+    removedPaths,
+    publicUrlCalls,
+    signedUrlCalls,
+    authCalls,
+    inserts,
+    updates,
+    calls,
+    functionInvocations,
+  };
 }
