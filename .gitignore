@@ -27,3 +27,11 @@ dist-ssr
 .herenow
 .herenow/*
 
+# Supabase CLI local state
+supabase/.temp
+
+# Local env (publishable key only; still keep out of git)
+.env
+.env.local
+.env*.local
+

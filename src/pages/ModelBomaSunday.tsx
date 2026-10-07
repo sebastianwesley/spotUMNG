@@ -5,14 +5,14 @@ import Footer from "@/components/Footer";
 import ImageLightbox from "@/components/ImageLightbox";
 import { motion } from "framer-motion";
 import { Instagram, ExternalLink } from "lucide-react";
-import bomaImage from "@/assets/boma-sunday.jpg";
-import bomaEditorial1 from "@/assets/boma-sunday-editorial-1.jpg";
-import bomaBackstage from "@/assets/boma-sunday-backstage.jpg";
-import bomaEditorial2 from "@/assets/boma-sunday-editorial-2.jpg";
-import bomaSnow from "@/assets/boma-sunday-snow.jpg";
-import bomaDuo from "@/assets/boma-sunday-duo.jpg";
-import bomaArmani from "@/assets/boma-sunday-armani.jpg";
-import bomaCeline from "@/assets/boma-sunday-celine.jpg";
+import bomaImage from "@/assets/boma-sunday.webp";
+import bomaEditorial1 from "@/assets/boma-sunday-editorial-1.webp";
+import bomaBackstage from "@/assets/boma-sunday-backstage.webp";
+import bomaEditorial2 from "@/assets/boma-sunday-editorial-2.webp";
+import bomaSnow from "@/assets/boma-sunday-snow.webp";
+import bomaDuo from "@/assets/boma-sunday-duo.webp";
+import bomaArmani from "@/assets/boma-sunday-armani.webp";
+import bomaCeline from "@/assets/boma-sunday-celine.webp";
 
 const galleryImages = [
   { src: bomaImage, alt: "Boma Sunday - Portrait", brand: null },
@@ -109,7 +109,7 @@ const ModelBomaSunday = forwardRef<HTMLDivElement>((_, ref) => {
                     className="relative aspect-[3/4] overflow-hidden rounded-2xl group cursor-pointer"
                     onClick={() => openLightbox(index + 1)}
                   >
-                    <img
+                    <img loading="lazy" decoding="async"
                       src={image.src}
                       alt={image.alt}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"

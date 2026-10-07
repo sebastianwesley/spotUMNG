@@ -28,6 +28,23 @@ const SpotlightUpdates = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const [isPaused, setIsPaused] = useState(false);
+  // Track the tallest slide so the carousel box always fits its content on
+  // every viewport (fixed min-h clipped text on mobile).
+  const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [slideBoxHeight, setSlideBoxHeight] = useState(200);
+
+  useEffect(() => {
+    const measure = () => {
+      const tallest = slideRefs.current.reduce(
+        (max, el) => (el ? Math.max(max, el.scrollHeight) : max),
+        200
+      );
+      setSlideBoxHeight(tallest);
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -89,11 +106,12 @@ const SpotlightUpdates = () => {
           onMouseLeave={() => setIsPaused(false)}
         >
           <div className="text-center">
-            <div className="relative min-h-[200px]">
+            <div className="relative transition-[height] duration-500" style={{ height: slideBoxHeight }}>
               {updates.map((update, index) => (
                 <div
                   key={update.id}
-                  className={`absolute inset-0 transition-all duration-500 ${
+                  ref={(el) => { slideRefs.current[index] = el; }}
+                  className={`absolute inset-x-0 top-0 transition-all duration-500 ${
                     index === currentIndex
                       ? "opacity-100 translate-x-0"
                       : index < currentIndex

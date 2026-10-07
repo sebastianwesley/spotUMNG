@@ -4,9 +4,9 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
-import successImage from "@/assets/success-nwokocha.jpg";
-import bomaImage from "@/assets/boma-sunday.jpg";
-import osohImage from "@/assets/Genevieve.jpg";
+import successImage from "@/assets/success-nwokocha.webp";
+import bomaImage from "@/assets/boma-sunday.webp";
+import osohImage from "@/assets/Genevieve.webp";
 
 const placedModels = [
   {
@@ -97,7 +97,7 @@ const Placements = () => {
                 onClick={() => handleImageClick(model.id, model.profilePath)}
               >
                 <div className="aspect-[3/4] overflow-hidden rounded-2xl relative group">
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={model.image}
                     alt={model.name}
                     className={`w-full h-full object-cover transition-all duration-1000 ease-out ${

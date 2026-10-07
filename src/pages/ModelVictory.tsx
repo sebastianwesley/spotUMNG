@@ -5,10 +5,10 @@ import Footer from "@/components/Footer";
 import ImageLightbox from "@/components/ImageLightbox";
 import { motion } from "framer-motion";
 import { Instagram, ExternalLink } from "lucide-react";
-import portraitImage from "@/assets/OLV.jpg";
-import olv1 from "@/assets/OLV1.jpg";
-import olv2 from "@/assets/OLV2.jpg";
-import olv3 from "@/assets/OLV3.jpg";
+import portraitImage from "@/assets/OLV.webp";
+import olv1 from "@/assets/OLV1.webp";
+import olv2 from "@/assets/OLV2.webp";
+import olv3 from "@/assets/OLV3.webp";
 
 const galleryImages = [
   { src: portraitImage, alt: "Willie Victory - Portrait", brand: null },
@@ -102,7 +102,7 @@ const ModelVictory = forwardRef<HTMLDivElement>((_, ref) => {
                     className="relative aspect-[3/4] overflow-hidden rounded-2xl group cursor-pointer"
                     onClick={() => openLightbox(index + 1)}
                   >
-                    <img
+                    <img loading="lazy" decoding="async"
                       src={image.src}
                       alt={image.alt}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"

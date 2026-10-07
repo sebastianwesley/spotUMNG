@@ -1,6 +1,15 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Camera, X } from "lucide-react";
+import { ArrowRight, X } from "lucide-react";
 import { toast } from "sonner";
+import { optimizeImage } from "@/lib/imageOptimization";
+import { notifyNewApplication } from "@/services/notificationService";
+import {
+  submitApplication,
+  uploadApplicantPhoto,
+  deleteApplicantPhotos,
+} from "@/lib/applicationService";
+import { validateApplication } from "@/lib/applyForm";
+import { isSupabaseConfigured } from "@/lib/supabaseClient";
 
 type PhotoType = 'headshot' | 'fullbody' | 'profile';
 
@@ -8,6 +17,97 @@ interface PhotoUpload {
   file: File;
   preview: string;
 }
+
+interface FormValues {
+  firstName: string;
+  lastName: string;
+  email: string;
+  age: string;
+  height: string;
+  location: string;
+  instagram: string;
+  about: string;
+}
+
+const EMPTY_FORM: FormValues = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  age: "",
+  height: "",
+  location: "",
+  instagram: "",
+  about: "",
+};
+
+/**
+ * Module scope (FIX 5): hoisted out of the ApplySection body so each keystroke
+ * no longer remounts every photo box (fresh function identity = full subtree
+ * remount, losing hidden-file-input state).
+ */
+const PhotoUploadBox = ({
+  type,
+  label,
+  subLabel,
+  inputRef,
+  photo,
+  onUpload,
+  onRemove,
+}: {
+  type: PhotoType;
+  label: string;
+  subLabel: string;
+  inputRef: React.RefObject<HTMLInputElement>;
+  photo: PhotoUpload | null;
+  onUpload: (type: PhotoType, e: React.ChangeEvent<HTMLInputElement>) => void;
+  onRemove: (type: PhotoType) => void;
+}) => (
+  <div className="space-y-2">
+    <label className="block text-xs tracking-[0.2em] uppercase text-muted-foreground">
+      {label} <span className="text-destructive">*</span>
+    </label>
+    <p className="text-xs text-muted-foreground/70 font-light">{subLabel}</p>
+
+    {/* Hidden inputs can't be natively validated (not focusable); handleSubmit enforces these as required */}
+    <input
+      ref={inputRef}
+      type="file"
+      name={type}
+      accept="image/*"
+      onChange={(e) => onUpload(type, e)}
+      className="hidden"
+    />
+
+    {photo ? (
+      <div className="relative aspect-[3/4] w-full max-w-[200px] group">
+        <img loading="lazy" decoding="async"
+          src={photo.preview}
+          alt={label}
+          className="w-full h-full object-cover border border-border"
+        />
+        <button
+          type="button"
+          onClick={() => onRemove(type)}
+          className="absolute top-2 right-2 w-7 h-7 bg-foreground text-background rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+    ) : (
+      <div
+        onClick={() => inputRef.current?.click()}
+        className="aspect-[3/4] w-full max-w-[200px] border border-muted-foreground/30 hover:border-foreground/60 transition-colors duration-300 cursor-pointer flex flex-col items-center justify-center group bg-muted/20"
+      >
+        <span className="text-2xl leading-none text-muted-foreground/50 group-hover:text-foreground/70 transition-colors duration-300 mb-3 font-light">
+          +
+        </span>
+        <p className="text-xs text-muted-foreground/70 group-hover:text-foreground/80 transition-colors duration-300 text-center px-2 font-light uppercase tracking-[0.15em]">
+          Click to upload {label.toLowerCase()}
+        </p>
+      </div>
+    )}
+  </div>
+);
 
 const ApplySection = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -19,7 +119,8 @@ const ApplySection = () => {
   });
   const [additionalPhotos, setAdditionalPhotos] = useState<PhotoUpload[]>([]);
   const [consentChecked, setConsentChecked] = useState(false);
-  const [redirectUrl, setRedirectUrl] = useState("");
+  const [form, setForm] = useState<FormValues>(EMPTY_FORM);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const headshotRef = useRef<HTMLInputElement>(null);
   const fullbodyRef = useRef<HTMLInputElement>(null);
@@ -27,17 +128,6 @@ const ApplySection = () => {
   const additionalRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    // Generate dynamic redirect URL back to the apply page
-    setRedirectUrl(window.location.origin + "/apply?success=true");
-
-    // Check if coming back from a successful email submission
-    const queryParams = new URLSearchParams(window.location.search);
-    if (queryParams.get("success") === "true") {
-      toast.success("Your model application has been submitted successfully!");
-      // Clean up the URL query parameter
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
-
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -103,63 +193,151 @@ const ApplySection = () => {
     });
   };
 
-  const PhotoUploadBox = ({
-    type,
-    label,
-    subLabel,
-    inputRef,
-    photo,
-  }: {
-    type: PhotoType;
-    label: string;
-    subLabel: string;
-    inputRef: React.RefObject<HTMLInputElement>;
-    photo: PhotoUpload | null;
-  }) => (
-    <div className="space-y-2">
-      <label className="block text-xs tracking-[0.2em] uppercase text-muted-foreground">
-        {label} <span className="text-destructive">*</span>
-      </label>
-      <p className="text-xs text-muted-foreground/70 font-light">{subLabel}</p>
-      
-      {/* File input must have the 'name' attribute for standard HTML form submission to attach files */}
-      <input
-        ref={inputRef}
-        type="file"
-        name={type}
-        accept="image/*"
-        onChange={(e) => handlePhotoUpload(type, e)}
-        className="hidden"
-      />
+  const handleFieldChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
 
-      {photo ? (
-        <div className="relative aspect-[3/4] w-full max-w-[200px] group">
-          <img
-            src={photo.preview}
-            alt={label}
-            className="w-full h-full object-cover border border-border"
-          />
-          <button
-            type="button"
-            onClick={() => removePhoto(type)}
-            className="absolute top-2 right-2 w-7 h-7 bg-foreground text-background rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-      ) : (
-        <div
-          onClick={() => inputRef.current?.click()}
-          className="aspect-[3/4] w-full max-w-[200px] border-2 border-dashed border-muted-foreground/30 hover:border-foreground/50 transition-colors duration-300 cursor-pointer flex flex-col items-center justify-center group bg-muted/20"
-        >
-          <Camera className="w-8 h-8 text-muted-foreground/50 group-hover:text-foreground/70 transition-colors duration-300 mb-3" />
-          <p className="text-xs text-muted-foreground/70 group-hover:text-foreground/80 transition-colors duration-300 text-center px-2 font-light">
-            Click to upload {label.toLowerCase()}
-          </p>
-        </div>
-      )}
-    </div>
-  );
+  const resetForm = () => {
+    Object.values(photos).forEach((photo) => photo && URL.revokeObjectURL(photo.preview));
+    additionalPhotos.forEach((photo) => URL.revokeObjectURL(photo.preview));
+
+    setForm(EMPTY_FORM);
+    setPhotos({ headshot: null, fullbody: null, profile: null });
+    setAdditionalPhotos([]);
+    setConsentChecked(false);
+
+    [headshotRef, fullbodyRef, profileRef, additionalRef].forEach((ref) => {
+      if (ref.current) ref.current.value = "";
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    // Field validation lives in the shared pure module (applyForm).
+    const validation = validateApplication({ ...form, consent: consentChecked });
+    if (!validation.valid) {
+      toast.error(Object.values(validation.errors)[0]);
+      return;
+    }
+
+    const firstName = form.firstName.trim();
+    const lastName = form.lastName.trim();
+    const email = form.email.trim();
+    const age = Number(form.age);
+    const height = form.height.trim();
+    const location = form.location.trim();
+
+    // The three required photo kinds are enforced in the UI: photos live in a
+    // private bucket and are not part of the pure validation contract.
+    const missingPhotos: string[] = [];
+    if (!photos.headshot) missingPhotos.push("a headshot");
+    if (!photos.fullbody) missingPhotos.push("a full-body photo");
+    if (!photos.profile) missingPhotos.push("a profile photo");
+
+    if (missingPhotos.length > 0) {
+      toast.error(`Please provide ${missingPhotos.join(", ")}.`);
+      return;
+    }
+
+    if (!isSupabaseConfigured()) {
+      toast.error("Submissions are temporarily unavailable. Please email us directly.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    // Storage paths successfully uploaded so far; removed (best-effort) if a
+    // later step fails so the private bucket never accumulates orphans.
+    const uploadedPaths: string[] = [];
+
+    try {
+      // Optimise then upload each photo. Even when optimizeImage fails to
+      // shrink (fail-open), the 10MB ceiling is still enforced at upload time.
+      // Detailed result so the applicant learns WHICH photo failed and why.
+      const upload = async (photo: PhotoUpload, kind: PhotoType | "additional") => {
+        const optimized = await optimizeImage(photo.file);
+        if (optimized.size > 10 * 1024 * 1024) {
+          return { url: "", error: "Photo must be under 10MB" };
+        }
+        const result = await uploadApplicantPhoto(optimized, kind);
+        if (result) uploadedPaths.push(result);
+        return { url: result, error: result ? null : "Upload failed" };
+      };
+
+      const [headshotUrl, fullbodyUrl, profileUrl] = await Promise.all([
+        upload(photos.headshot!, "headshot"),
+        upload(photos.fullbody!, "fullbody"),
+        upload(photos.profile!, "profile"),
+      ]);
+
+      // The three photos are required; name the one(s) that failed in the toast.
+      const failedPhotos = [
+        [headshotUrl, "headshot"],
+        [fullbodyUrl, "full-body"],
+        [profileUrl, "profile"],
+      ]
+        .filter(([result]) => (result as { url: string; error: string | null }).error)
+        .map(([, label]) => label as string);
+
+      if (failedPhotos.length > 0) {
+        const reasons = [headshotUrl, fullbodyUrl, profileUrl]
+          .map((result) => (result as { url: string; error: string | null }).error)
+          .filter(Boolean);
+        // Roll back the objects that did upload before bailing.
+        await deleteApplicantPhotos(uploadedPaths);
+        toast.error(
+          `We couldn't upload your ${failedPhotos.join(" and ")} photo: ${reasons[0]}`
+        );
+        return;
+      }
+
+      const additionalUrls: string[] = [];
+      for (const photo of additionalPhotos) {
+        const { url } = await upload(photo, "additional");
+        if (url) additionalUrls.push(url);
+      }
+
+      const { error } = await submitApplication({
+        firstName,
+        lastName,
+        email,
+        age,
+        height,
+        location,
+        instagram: form.instagram.trim() || undefined,
+        about: form.about.trim() || undefined,
+        headshotUrl: headshotUrl.url || undefined,
+        fullbodyUrl: fullbodyUrl.url || undefined,
+        profileUrl: profileUrl.url || undefined,
+        additionalUrls,
+      });
+
+      if (error) {
+        // Roll back the uploaded objects so a failed insert leaves no orphans.
+        await deleteApplicantPhotos(uploadedPaths);
+        toast.error(`We couldn't submit your application: ${error.message}`);
+        return;
+      }
+
+      // Fire-and-forget: a webhook failure must not affect the applicant.
+      void notifyNewApplication({ firstName, lastName, email });
+
+      toast.success("Your model application has been submitted successfully!");
+      resetForm();
+    } catch (error) {
+      toast.error(
+        `We couldn't submit your application: ${
+          error instanceof Error ? error.message : "please try again."
+        }`
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <section
@@ -222,17 +400,8 @@ const ApplySection = () => {
               Application Form
             </h3>
 
-            {/* Standard HTML Form submission to FormSubmit (bypasses CORS + handles image uploads natively) */}
-            <form 
-              action="https://formsubmit.co/spotlightmng@outlook.com" 
-              method="POST" 
-              enctype="multipart/form-data" 
-              className="space-y-6"
-            >
-              {/* FormSubmit Config Inputs */}
-              <input type="hidden" name="_next" value={redirectUrl} />
-              <input type="hidden" name="_captcha" value="false" />
-
+            {/* Controlled React form — photos are optimised and uploaded to Supabase on submit */}
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid sm:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-xs tracking-[0.2em] uppercase text-muted-foreground mb-3">
@@ -240,7 +409,9 @@ const ApplySection = () => {
                   </label>
                   <input
                     type="text"
-                    name="FirstName"
+                    name="firstName"
+                    value={form.firstName}
+                    onChange={handleFieldChange}
                     required
                     className="w-full px-0 py-3 bg-transparent border-b border-border text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-foreground transition-colors duration-300 font-light"
                     placeholder="Jane"
@@ -252,7 +423,9 @@ const ApplySection = () => {
                   </label>
                   <input
                     type="text"
-                    name="LastName"
+                    name="lastName"
+                    value={form.lastName}
+                    onChange={handleFieldChange}
                     required
                     className="w-full px-0 py-3 bg-transparent border-b border-border text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-foreground transition-colors duration-300 font-light"
                     placeholder="Doe"
@@ -266,7 +439,9 @@ const ApplySection = () => {
                 </label>
                 <input
                   type="email"
-                  name="Email"
+                  name="email"
+                  value={form.email}
+                  onChange={handleFieldChange}
                   required
                   className="w-full px-0 py-3 bg-transparent border-b border-border text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-foreground transition-colors duration-300 font-light"
                   placeholder="jane@example.com"
@@ -280,7 +455,9 @@ const ApplySection = () => {
                   </label>
                   <input
                     type="number"
-                    name="Age"
+                    name="age"
+                    value={form.age}
+                    onChange={handleFieldChange}
                     required
                     min="16"
                     className="w-full px-0 py-3 bg-transparent border-b border-border text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-foreground transition-colors duration-300 font-light"
@@ -293,7 +470,9 @@ const ApplySection = () => {
                   </label>
                   <input
                     type="text"
-                    name="Height"
+                    name="height"
+                    value={form.height}
+                    onChange={handleFieldChange}
                     required
                     className="w-full px-0 py-3 bg-transparent border-b border-border text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-foreground transition-colors duration-300 font-light"
                     placeholder="5'9&quot;"
@@ -305,7 +484,9 @@ const ApplySection = () => {
                   </label>
                   <input
                     type="text"
-                    name="Location"
+                    name="location"
+                    value={form.location}
+                    onChange={handleFieldChange}
                     required
                     className="w-full px-0 py-3 bg-transparent border-b border-border text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-foreground transition-colors duration-300 font-light"
                     placeholder="Lagos"
@@ -319,7 +500,9 @@ const ApplySection = () => {
                 </label>
                 <input
                   type="text"
-                  name="Instagram"
+                  name="instagram"
+                  value={form.instagram}
+                  onChange={handleFieldChange}
                   className="w-full px-0 py-3 bg-transparent border-b border-border text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-foreground transition-colors duration-300 font-light"
                   placeholder="@username"
                 />
@@ -327,8 +510,8 @@ const ApplySection = () => {
 
               {/* Photos Section */}
               <div className="pt-4">
-                <h4 className="text-sm tracking-[0.15em] uppercase text-foreground mb-2 font-sans font-bold flex items-center gap-2">
-                  <span>📸</span> Photos
+                <h4 className="text-sm tracking-[0.15em] uppercase text-foreground mb-2 font-sans font-bold">
+                  Photos
                 </h4>
                 <p className="text-xs text-muted-foreground/70 font-light mb-6">
                   Please upload your photos. Required: headshot, full-body shot, and profile shot.
@@ -342,6 +525,8 @@ const ApplySection = () => {
                     subLabel="Front-facing portrait photo"
                     inputRef={headshotRef}
                     photo={photos.headshot}
+                    onUpload={handlePhotoUpload}
+                    onRemove={removePhoto}
                   />
                   <PhotoUploadBox
                     type="fullbody"
@@ -349,6 +534,8 @@ const ApplySection = () => {
                     subLabel="Full-length standing photo"
                     inputRef={fullbodyRef}
                     photo={photos.fullbody}
+                    onUpload={handlePhotoUpload}
+                    onRemove={removePhoto}
                   />
                   <PhotoUploadBox
                     type="profile"
@@ -356,6 +543,8 @@ const ApplySection = () => {
                     subLabel="Side-view portrait photo"
                     inputRef={profileRef}
                     photo={photos.profile}
+                    onUpload={handlePhotoUpload}
+                    onRemove={removePhoto}
                   />
                 </div>
 
@@ -368,7 +557,6 @@ const ApplySection = () => {
                   <input
                     ref={additionalRef}
                     type="file"
-                    name="AdditionalPhotos"
                     accept="image/*"
                     multiple
                     onChange={handleAdditionalPhotos}
@@ -398,7 +586,7 @@ const ApplySection = () => {
                     <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 mt-3">
                       {additionalPhotos.map((photo, index) => (
                         <div key={index} className="relative aspect-square group">
-                          <img
+                          <img loading="lazy" decoding="async"
                             src={photo.preview}
                             alt={`Additional ${index + 1}`}
                             className="w-full h-full object-cover border border-border"
@@ -422,7 +610,9 @@ const ApplySection = () => {
                   Tell Us About Yourself
                 </label>
                 <textarea
-                  name="About"
+                  name="about"
+                  value={form.about}
+                  onChange={handleFieldChange}
                   rows={4}
                   className="w-full px-0 py-3 bg-transparent border-b border-border text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-foreground transition-colors duration-300 resize-none font-light"
                   placeholder="Share your experience and aspirations..."
@@ -449,9 +639,12 @@ const ApplySection = () => {
               <div className="pt-8">
                 <button
                   type="submit"
-                  className="group relative inline-flex items-center justify-center gap-3 px-10 py-4 bg-foreground text-background text-xs tracking-[0.25em] uppercase font-sans font-medium overflow-hidden transition-all duration-500 hover:bg-foreground/90"
+                  disabled={isSubmitting}
+                  className="group relative inline-flex items-center justify-center gap-3 px-10 py-4 bg-foreground text-background text-xs tracking-[0.25em] uppercase font-sans font-medium overflow-hidden transition-all duration-500 hover:bg-foreground/90 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  <span className="relative z-10">Submit Application</span>
+                  <span className="relative z-10">
+                    {isSubmitting ? "Submitting..." : "Submit Application"}
+                  </span>
                   <ArrowRight className="relative z-10 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
                   <span className="absolute inset-0 bg-primary/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
                 </button>

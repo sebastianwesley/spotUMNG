@@ -5,8 +5,8 @@ import Footer from "@/components/Footer";
 import ImageLightbox from "@/components/ImageLightbox";
 import { motion } from "framer-motion";
 import { Instagram, ExternalLink } from "lucide-react";
-import genevieveImage from "@/assets/Genevieve.jpg";
-import gene1Image from "@/assets/gene1.jpg";
+import genevieveImage from "@/assets/Genevieve.webp";
+import gene1Image from "@/assets/gene1.webp";
 
 const galleryImages = [
   { src: genevieveImage, alt: "Usoh Ifeanyi Chukwulanigam - Portrait", brand: "Portrait" },
@@ -95,7 +95,7 @@ const ModelUsohIfeanyi = forwardRef<HTMLDivElement>((_, ref) => {
                     className="relative aspect-[3/4] overflow-hidden rounded-2xl group cursor-pointer"
                     onClick={() => openLightbox(index + 1)}
                   >
-                    <img
+                    <img loading="lazy" decoding="async"
                       src={image.src}
                       alt={image.alt}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"

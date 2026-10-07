@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ExternalLink, X } from 'lucide-react';
-import discoveryImage from '@/assets/discovery-to-placement.jpg';
-import successImage from '@/assets/success-nwokocha.jpg';
-import bomaImage from '@/assets/boma-sunday.jpg';
+import discoveryImage from '@/assets/discovery-to-placement.webp';
+import successImage from '@/assets/success-nwokocha.webp';
+import bomaImage from '@/assets/boma-sunday.webp';
 
 const placedModels = [
   {
@@ -41,7 +41,7 @@ export default function HorizontalPlacementGallery() {
             className="flex flex-col items-center px-6"
           >
             <div className="w-full max-w-md aspect-[3/4] rounded-[2rem] overflow-hidden mb-10 shadow-lg">
-              <img 
+              <img loading="lazy" decoding="async" 
                 src={discoveryImage} 
                 alt="Spotlight Model Development" 
                 className="w-full h-full object-cover"
@@ -88,7 +88,7 @@ export default function HorizontalPlacementGallery() {
                 >
                   <Link to={model.profileUrl}>
                     <div className="aspect-[3/4] rounded-[2rem] overflow-hidden mb-4 bg-muted group">
-                      <img 
+                      <img loading="lazy" decoding="async" 
                         src={model.image} 
                         alt={model.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 

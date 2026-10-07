@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import abt1 from "@/assets/abt1.jpg";
-import abt4 from "@/assets/abt4.jpg";
-import abt5 from "@/assets/abt5.jpg";
-import pillar1 from "@/assets/pillar1.jpg";
+import abt1 from "@/assets/abt1.webp";
+import abt4 from "@/assets/abt4.webp";
+import abt5 from "@/assets/abt5.webp";
+import pillar1 from "@/assets/pillar1.webp";
 
 const AboutFull = () => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -118,7 +118,7 @@ const AboutFull = () => {
                 onHoverEnd={() => setHoveredIndex(null)}
               >
                 <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-secondary shadow-medium group cursor-pointer">
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={image.src}
                     alt={image.alt}
                     className={`w-full h-full object-cover transition-all duration-700 ${

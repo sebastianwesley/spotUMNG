@@ -2,12 +2,12 @@ import { useState, useRef, useEffect } from "react";
 import { motion, useMotionValue, animate } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import nessy1Img from "@/assets/nessy1.jpg";
-import nessy2Img from "@/assets/nessy2.jpg";
-import paul1Img from "@/assets/paul1.jpg";
-import paul2Img from "@/assets/paul2.jpg";
-import goodnessImg from "@/assets/goodness_new.jpg";
-import victoryImg from "@/assets/OLV.jpg";
+import nessy1Img from "@/assets/nessy1.webp";
+import nessy2Img from "@/assets/nessy2.webp";
+import paul1Img from "@/assets/paul1.webp";
+import paul2Img from "@/assets/paul2.webp";
+import goodnessImg from "@/assets/goodness_new.webp";
+import victoryImg from "@/assets/OLV.webp";
 
 // Featured models data
 const featuredModels = [
@@ -186,7 +186,7 @@ const FeaturedModelsGallery = () => {
             >
               <Link to={model.profilePath || "/models"} className="block w-full h-full">
                 {/* Image */}
-                <img
+                <img loading="lazy" decoding="async"
                   src={model.image}
                   alt={model.name}
                   className={`w-full h-full object-cover pointer-events-none transition-all duration-700 ${

@@ -5,9 +5,9 @@ import Footer from "@/components/Footer";
 import ImageLightbox from "@/components/ImageLightbox";
 import { motion } from "framer-motion";
 import { Instagram, ExternalLink } from "lucide-react";
-import paul1Image from "@/assets/paul1.jpg";
-import paul2Image from "@/assets/paul2.jpg";
-import paul3Image from "@/assets/paul3.jpg";
+import paul1Image from "@/assets/paul1.webp";
+import paul2Image from "@/assets/paul2.webp";
+import paul3Image from "@/assets/paul3.webp";
 
 const galleryImages = [
   { src: paul1Image, alt: "Paul Thompson - Portrait", brand: null },
@@ -97,7 +97,7 @@ const ModelPaulThompson = forwardRef<HTMLDivElement>((_, ref) => {
                     className="relative aspect-[3/4] overflow-hidden rounded-2xl group cursor-pointer"
                     onClick={() => openLightbox(index + 1)}
                   >
-                    <img
+                    <img loading="lazy" decoding="async"
                       src={image.src}
                       alt={image.alt}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"

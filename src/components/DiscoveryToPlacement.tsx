@@ -2,9 +2,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { useInView } from "framer-motion";
 import { Link } from "react-router-dom";
-import discoveryImage from "@/assets/discovery-to-placement.jpg";
-import bomaSundayImage from "@/assets/boma-sunday-celine.jpg";
-import osohIfeayiImage from "@/assets/Genevieve.jpg";
+import discoveryImage from "@/assets/discovery-to-placement.webp";
+import bomaSundayImage from "@/assets/boma-sunday-celine.webp";
+import osohIfeayiImage from "@/assets/Genevieve.webp";
 
 const placementImages = [
   { src: discoveryImage, alt: "Spotlight x Adaora - Gucci Fashion Week 2025", name: "Success Nwokocha", textColor: "text-white", position: "bottom-12", bgClass: "", profilePath: "/placements/success-nwokocha" },

@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import successNwokochaImg from "@/assets/success-nwokocha.jpg";
-import bomaSundayImg from "@/assets/boma-sunday.jpg";
-import osohIfeayiImg from "@/assets/Genevieve.jpg";
-import nessy1Img from "@/assets/nessy1.jpg";
-import nessy2Img from "@/assets/nessy2.jpg";
-import paul1Img from "@/assets/paul1.jpg";
-import paul2Img from "@/assets/paul2.jpg";
-import goodnessImg from "@/assets/goodness_new.jpg";
-import victoryImg from "@/assets/OLV.jpg";
+import successNwokochaImg from "@/assets/success-nwokocha.webp";
+import bomaSundayImg from "@/assets/boma-sunday.webp";
+import osohIfeayiImg from "@/assets/Genevieve.webp";
+import nessy1Img from "@/assets/nessy1.webp";
+import nessy2Img from "@/assets/nessy2.webp";
+import paul1Img from "@/assets/paul1.webp";
+import paul2Img from "@/assets/paul2.webp";
+import goodnessImg from "@/assets/goodness_new.webp";
+import victoryImg from "@/assets/OLV.webp";
 
 const models = [
   {
@@ -180,7 +180,7 @@ const PortfolioShowcase = () => {
             >
               {/* Image Container */}
               <div className="relative aspect-[3/4] overflow-hidden bg-secondary">
-                <img
+                <img loading="lazy" decoding="async"
                   src={model.image}
                   alt={model.name}
                   className={`w-full h-full object-cover transition-all duration-700 ${

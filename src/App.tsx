@@ -21,6 +21,9 @@ import ModelBomaSunday from "./pages/ModelBomaSunday";
 import ModelUsohIfeanyi from "./pages/ModelUsohIfeanyi";
 import ModelPaulThompson from "./pages/ModelPaulThompson";
 import ModelVictory from "./pages/ModelVictory";
+import AdminLogin from "./pages/AdminLogin";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminGuard from "@/components/AdminGuard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -50,6 +53,15 @@ const App = () => (
             <Route path="/placements/usoh-ifeanyi" element={<ModelUsohIfeanyi />} />
             <Route path="/placements/paul-thompson" element={<ModelPaulThompson />} />
             <Route path="/placements/victory" element={<ModelVictory />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route
+              path="/admin"
+              element={
+                <AdminGuard>
+                  <AdminDashboard />
+                </AdminGuard>
+              }
+            />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
