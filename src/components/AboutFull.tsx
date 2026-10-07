@@ -118,7 +118,7 @@ const AboutFull = () => {
                 onHoverEnd={() => setHoveredIndex(null)}
               >
                 <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-secondary shadow-medium group cursor-pointer">
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={image.src}
                     alt={image.alt}
                     className={`w-full h-full object-cover transition-all duration-700 ${

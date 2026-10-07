@@ -14,4 +14,17 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        // Split the big third-party libraries out of the single app bundle so
+        // they cache independently of app code.
+        manualChunks: {
+          react: ["react", "react-dom", "react-router-dom"],
+          motion: ["framer-motion"],
+          charts: ["recharts"],
+        },
+      },
+    },
+  },
 }));

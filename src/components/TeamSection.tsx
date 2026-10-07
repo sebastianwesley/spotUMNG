@@ -90,7 +90,7 @@ const TeamSection = () => {
             >
               {/* Image */}
               <div className="relative mb-6 mx-auto w-48 h-48 lg:w-56 lg:h-56 overflow-hidden rounded-full">
-                <img
+                <img loading="lazy" decoding="async"
                   src={member.image}
                   alt={member.name}
                   className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 group-hover:scale-110"

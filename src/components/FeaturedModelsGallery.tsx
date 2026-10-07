@@ -186,7 +186,7 @@ const FeaturedModelsGallery = () => {
             >
               <Link to={model.profilePath || "/models"} className="block w-full h-full">
                 {/* Image */}
-                <img
+                <img loading="lazy" decoding="async"
                   src={model.image}
                   alt={model.name}
                   className={`w-full h-full object-cover pointer-events-none transition-all duration-700 ${

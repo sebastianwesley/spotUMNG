@@ -109,7 +109,7 @@ const ModelBomaSunday = forwardRef<HTMLDivElement>((_, ref) => {
                     className="relative aspect-[3/4] overflow-hidden rounded-2xl group cursor-pointer"
                     onClick={() => openLightbox(index + 1)}
                   >
-                    <img
+                    <img loading="lazy" decoding="async"
                       src={image.src}
                       alt={image.alt}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"

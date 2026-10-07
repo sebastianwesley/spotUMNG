@@ -105,7 +105,7 @@ const ImageLightbox = ({
             className="relative max-w-[90vw] max-h-[85vh] flex flex-col items-center"
             onClick={(e) => e.stopPropagation()}
           >
-            <img
+            <img loading="lazy" decoding="async"
               src={currentImage.src}
               alt={currentImage.alt}
               className="max-w-full max-h-[80vh] object-contain rounded-lg"

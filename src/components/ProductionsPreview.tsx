@@ -22,27 +22,34 @@ import pro2 from "@/assets/pro2.jpg";
 import pro3 from "@/assets/pro3.jpg";
 import pr4 from "@/assets/pr4.jpg";
 import peculiar from "@/assets/peculiar.jpg";
+// WebP variants for the largest production images (fallback JPGs stay below).
+import os1Webp from "@/assets/OS1.webp";
+import os5Webp from "@/assets/OS5.webp";
+import os6Webp from "@/assets/OS6.webp";
+import os9Webp from "@/assets/OS9.webp";
+import os12Webp from "@/assets/OS12.webp";
+import ns5Webp from "@/assets/NS5.webp";
 
 const productions = [
-  { id: 1, image: os1, title: "Sartorial Noir", category: "Editorial Campaign", year: "2023", credit: "Ph: Spotlight Studio" },
-  { id: 2, image: pro5, title: "Summer Style It", category: "E-com Test Shoot", year: "2023", credit: "Ph: Spotlight Studio" },
-  { id: 3, image: os3, title: "Revealed Crimson", category: "Revealed Crimson", year: "2023", credit: "Ph: Spotlight Studio" },
-  { id: 4, image: pro6, title: "Summer Style It", category: "E-com Test Shoot", year: "2023", credit: "Ph: Spotlight Studio" },
-  { id: 5, image: os5, title: "Chromatic Rebellion", category: "Chromatic Rebellion", year: "2023", credit: "Ph: Spotlight Studio" },
-  { id: 6, image: os6, title: "Basquiat's Legacy", category: "Test Shoot", year: "2024", credit: "Ph: Spotlight Studio" },
-  { id: 7, image: pro1, title: "Summer Style It", category: "E-com Test Shoot", year: "2023", credit: "Ph: Spotlight Studio" },
-  { id: 8, image: os9, title: "Chromatic Rebellion", category: "Chromatic Rebellion", year: "2023", credit: "Ph: Spotlight Studio" },
-  { id: 9, image: pro7, title: "Summer Style It", category: "E-com Test Shoot", year: "2023", credit: "Ph: Spotlight Studio" },
-  { id: 10, image: os11, title: "Scarlet", category: "Cover Story: Scarlet", year: "2024", credit: "Ph: Spotlight Studio" },
-  { id: 11, image: os12, title: "Metropolis", category: "Urban Editorial", year: "2024", credit: "Ph: Spotlight Studio" },
-  { id: 12, image: ns5, title: "TEST SHOOT", category: "Test Shoot", year: "2024", credit: "Ph: Spotlight Studio" },
-  { id: 13, image: nss, title: "Serenity", category: "Scarlet", year: "2023", credit: "Ph: Spotlight Studio" },
-  { id: 14, image: newImg, title: "Summer Style It", category: "E-com Test Shoot", year: "2023", credit: "Ph: Spotlight Studio" },
-  { id: 15, image: os7, title: "Scarlet", category: "Chromatic Rebellion", year: "2023", credit: "Ph: Spotlight Studio" },
-  { id: 16, image: pro2, title: "Summer Style It", category: "E-com Test Shoot", year: "2023", credit: "Ph: Spotlight Studio" },
-  { id: 17, image: pro3, title: "Summer Style It", category: "E-com Test Shoot", year: "2023", credit: "Ph: Spotlight Studio" },
-  { id: 18, image: pr4, title: "Summer Style It", category: "E-com Test Shoot", year: "2023", credit: "Ph: Spotlight Studio" },
-  { id: 19, image: peculiar, title: "Midnight Glance", category: "Beauty Editorial", year: "2020", credit: "Ph: Spotlight Studio" },
+  { id: 1, image: os1, webp: os1Webp, title: "Sartorial Noir", category: "Editorial Campaign", year: "2023", credit: "Ph: Spotlight Studio" },
+  { id: 2, image: pro5, webp: null, title: "Summer Style It", category: "E-com Test Shoot", year: "2023", credit: "Ph: Spotlight Studio" },
+  { id: 3, image: os3, webp: null, title: "Revealed Crimson", category: "Revealed Crimson", year: "2023", credit: "Ph: Spotlight Studio" },
+  { id: 4, image: pro6, webp: null, title: "Summer Style It", category: "E-com Test Shoot", year: "2023", credit: "Ph: Spotlight Studio" },
+  { id: 5, image: os5, webp: os5Webp, title: "Chromatic Rebellion", category: "Chromatic Rebellion", year: "2023", credit: "Ph: Spotlight Studio" },
+  { id: 6, image: os6, webp: os6Webp, title: "Basquiat's Legacy", category: "Test Shoot", year: "2024", credit: "Ph: Spotlight Studio" },
+  { id: 7, image: pro1, webp: null, title: "Summer Style It", category: "E-com Test Shoot", year: "2023", credit: "Ph: Spotlight Studio" },
+  { id: 8, image: os9, webp: os9Webp, title: "Chromatic Rebellion", category: "Chromatic Rebellion", year: "2023", credit: "Ph: Spotlight Studio" },
+  { id: 9, image: pro7, webp: null, title: "Summer Style It", category: "E-com Test Shoot", year: "2023", credit: "Ph: Spotlight Studio" },
+  { id: 10, image: os11, webp: null, title: "Scarlet", category: "Cover Story: Scarlet", year: "2024", credit: "Ph: Spotlight Studio" },
+  { id: 11, image: os12, webp: os12Webp, title: "Metropolis", category: "Urban Editorial", year: "2024", credit: "Ph: Spotlight Studio" },
+  { id: 12, image: ns5, webp: ns5Webp, title: "TEST SHOOT", category: "Test Shoot", year: "2024", credit: "Ph: Spotlight Studio" },
+  { id: 13, image: nss, webp: null, title: "Serenity", category: "Scarlet", year: "2023", credit: "Ph: Spotlight Studio" },
+  { id: 14, image: newImg, webp: null, title: "Summer Style It", category: "E-com Test Shoot", year: "2023", credit: "Ph: Spotlight Studio" },
+  { id: 15, image: os7, webp: null, title: "Scarlet", category: "Chromatic Rebellion", year: "2023", credit: "Ph: Spotlight Studio" },
+  { id: 16, image: pro2, webp: null, title: "Summer Style It", category: "E-com Test Shoot", year: "2023", credit: "Ph: Spotlight Studio" },
+  { id: 17, image: pro3, webp: null, title: "Summer Style It", category: "E-com Test Shoot", year: "2023", credit: "Ph: Spotlight Studio" },
+  { id: 18, image: pr4, webp: null, title: "Summer Style It", category: "E-com Test Shoot", year: "2023", credit: "Ph: Spotlight Studio" },
+  { id: 19, image: peculiar, webp: null, title: "Midnight Glance", category: "Beauty Editorial", year: "2020", credit: "Ph: Spotlight Studio" },
 ];
 
 const ProductionsPreview = () => {
@@ -141,7 +148,7 @@ const ProductionsPreview = () => {
           transition={{ duration: 1 }}
           className="absolute inset-0 z-0 pointer-events-none"
         >
-          <img
+          <img loading="lazy" decoding="async"
             src={productions[imageIndex].image}
             alt=""
             className="w-full h-full object-cover blur-[80px] scale-125"
@@ -205,7 +212,7 @@ const ProductionsPreview = () => {
                   className="relative max-h-full max-w-[95vw] shadow-[0_0_120px_rgba(0,0,0,0.8)] flex rounded-sm overflow-hidden group/frame"
                 >
                   <div className="absolute inset-0 border border-white/10 z-10 pointer-events-none"></div>
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={productions[imageIndex].image}
                     alt={productions[imageIndex].title}
                     className="max-h-[70vh] md:max-h-[85vh] w-auto max-w-full object-contain select-none"

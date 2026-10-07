@@ -97,7 +97,7 @@ const Placements = () => {
                 onClick={() => handleImageClick(model.id, model.profilePath)}
               >
                 <div className="aspect-[3/4] overflow-hidden rounded-2xl relative group">
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={model.image}
                     alt={model.name}
                     className={`w-full h-full object-cover transition-all duration-1000 ease-out ${

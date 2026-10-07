@@ -180,7 +180,7 @@ const PortfolioShowcase = () => {
             >
               {/* Image Container */}
               <div className="relative aspect-[3/4] overflow-hidden bg-secondary">
-                <img
+                <img loading="lazy" decoding="async"
                   src={model.image}
                   alt={model.name}
                   className={`w-full h-full object-cover transition-all duration-700 ${
