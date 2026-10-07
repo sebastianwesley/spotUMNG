@@ -6,9 +6,6 @@
  * degrade to a passthrough of the original file: it must never throw and never
  * produce bytes larger than the input.
  *
- * `buildResponsiveAttrs(width, height)` returns the attributes applied to an
- * <img> so photos render lazily at their intrinsic size.
- *
  * These tests are RED until the module exists. They only use the passthrough
  * branch, which needs no canvas/DOM.
  */
@@ -64,37 +61,5 @@ describe("imageOptimization / optimizeImage", () => {
 
     await expect(optimizeImage(file as any, undefined as any)).resolves.toBeDefined();
     await expect(optimizeImage(file as any, {})).resolves.toBeDefined();
-  });
-});
-
-describe("imageOptimization / buildResponsiveAttrs", () => {
-  test("is exported as a function", async () => {
-    const { buildResponsiveAttrs } = await loadImageOptimization();
-
-    expect(typeof buildResponsiveAttrs).toBe("function");
-  });
-
-  test("returns the intrinsic size plus lazy/async decoding hints", async () => {
-    const { buildResponsiveAttrs } = await loadImageOptimization();
-
-    const attrs = buildResponsiveAttrs(1200, 1600);
-
-    expect(attrs).toEqual({
-      width: 1200,
-      height: 1600,
-      loading: "lazy",
-      decoding: "async",
-    });
-  });
-
-  test("rounds descriptive or non-numeric dimensions", async () => {
-    const { buildResponsiveAttrs } = await loadImageOptimization();
-
-    const attrs = buildResponsiveAttrs(1200.6, "1600" as any);
-
-    expect(attrs.width).toBe(1201);
-    expect(attrs.height).toBe(1600);
-    expect(attrs.loading).toBe("lazy");
-    expect(attrs.decoding).toBe("async");
   });
 });

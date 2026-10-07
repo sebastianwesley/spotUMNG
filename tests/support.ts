@@ -9,7 +9,7 @@ import { expect } from "bun:test";
 
 /** The deployed project the contract was verified against. */
 export const SUPABASE_URL = "https://mkxmkcterzqezgksbxue.supabase.co";
-export const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_GTtZqr7VAFNToAiVR4ChdQ_MC5hadXM"; // gitleaks:allow — publishable key, public by design
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_GTtZqr7VAFNToAiVR4ChdQ_MC5hadXM"; // gitleaks:allow — publishable key, public by design
 
 /**
  * `bun test` does not load `.env.local`, and `import.meta.env` mirrors
@@ -43,7 +43,7 @@ export function seedOfflineSupabaseEnv(): void {
  * Imports a production module, failing with a message that states the missing
  * contract. A module that does not exist yet is the expected red for this suite.
  */
-export async function loadModule<T = any>(specifier: string): Promise<T> {
+async function loadModule<T = any>(specifier: string): Promise<T> {
   try {
     return (await import(specifier)) as T;
   } catch (error) {

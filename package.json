@@ -11,7 +11,8 @@
     "test": "bun test",
     "preview": "vite preview",
     "preview:mobile": "node mobile-preview.js",
-    "share": "npm run build && node deploy.js"
+    "share": "npm run build && node deploy.js",
+    "images:optimize": "node scripts/optimize-images.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

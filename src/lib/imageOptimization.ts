@@ -79,16 +79,3 @@ export async function optimizeImage(
     return file;
   }
 }
-
-/**
- * Attributes applied to an <img> so photos render lazily at their intrinsic
- * size. Non-numeric dimensions are rounded.
- */
-export function buildResponsiveAttrs(width: unknown, height: unknown) {
-  return {
-    width: Math.round(Number(width)),
-    height: Math.round(Number(height)),
-    loading: "lazy" as const,
-    decoding: "async" as const,
-  };
-}
