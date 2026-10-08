@@ -100,7 +100,7 @@ const PhotoStrip = ({ app }: { app: Application }) => {
     if (!supabase || !pathsKey) return;
     let active = true;
 
-    Promise.all(
+    void Promise.all(
       pathsKey.split("|").filter(Boolean).map(async (path) => {
         const { data } = await supabase.storage
           .from("applicant-photos")
@@ -193,11 +193,11 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     let alive = true;
-    getAdminSession().then(({ session }) => {
+    void getAdminSession().then(({ session }) => {
       if (!alive) return;
       setAdminEmail((session as Session | null)?.user?.email ?? null);
     });
-    listApplications().then(({ data, error }) => {
+    void listApplications().then(({ data, error }) => {
       if (!alive) return;
       if (error) setLoadError(`Failed to load applications: ${error.message}`);
       setApplications(Array.isArray(data) ? data : []);
