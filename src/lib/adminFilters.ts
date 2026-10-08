@@ -70,6 +70,9 @@ export function parseHeightValue(
   const cleaned = String(heightStr).trim().toLowerCase();
   if (!cleaned) return 0;
 
+  // Reject negative heights
+  if (cleaned.startsWith("-")) return 0;
+
   // 1. Feet and inches pattern: 5'11", 5'11, 6', 6ft, 5.5ft
   const feetInchesMatch = cleaned.match(
     /^(\d+(?:\.\d+)?)\s*(?:'|ft|feet)\s*(?:(\d+(?:\.\d+)?)\s*(?:"|in|inches)?)?\s*$/
@@ -84,7 +87,11 @@ export function parseHeightValue(
   // 2. Meters pattern: 1.80m, 1.8 m, 1.8 meters, 1.8 meter
   const metersMatch = cleaned.match(/^(\d+(?:\.\d+)?)\s*m(?:eters?)?\b/);
   if (metersMatch) {
-    return (parseFloat(metersMatch[1]) || 0) * 100;
+    const m = parseFloat(metersMatch[1]) || 0;
+    // Human heights in meters are between 0.5 and 3.0; values >= 3.0 (like "175m") fall through to cm
+    if (m > 0 && m < 3.0) {
+      return m * 100;
+    }
   }
 
   // 3. Explicit inches pattern: 70", 70 in, 70 inches

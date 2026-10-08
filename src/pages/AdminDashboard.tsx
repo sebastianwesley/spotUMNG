@@ -503,7 +503,6 @@ const AdminDashboard = () => {
                     <input
                       id="admin-search"
                       type="text"
-                      role="searchbox"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder="Search name, email, location, IG..."

@@ -177,6 +177,18 @@ describe("adminFilters - parseHeightValue", () => {
     expect(parseHeightValue(180)).toBe(180);
   });
 
+  it("rejects negative heights safely", () => {
+    expect(parseHeightValue("-5'11\"")).toBe(0);
+    expect(parseHeightValue("-175")).toBe(0);
+  });
+
+  it("handles implausible meter values by falling through to centimeters", () => {
+    // "175m" is a typo for 175cm; should not parse as 17500cm
+    expect(parseHeightValue("175m")).toBe(175);
+    // Plausible meter value
+    expect(parseHeightValue("1.80m")).toBe(180);
+  });
+
   it("normalizes mixed units so 175cm sorts before 5'11\" and 6'", () => {
     const cm175 = parseHeightValue("175cm");
     const ft511 = parseHeightValue("5'11\"");
