@@ -182,6 +182,11 @@ describe("adminFilters - parseHeightValue", () => {
     expect(parseHeightValue("-175")).toBe(0);
   });
 
+  it("handles curly quotes in imperial height notation", () => {
+    expect(parseHeightValue("5’11”")).toBeCloseTo(180.34, 1);
+    expect(parseHeightValue("6’")).toBeCloseTo(182.88, 1);
+  });
+
   it("handles implausible meter values by falling through to centimeters", () => {
     // "175m" is a typo for 175cm; should not parse as 17500cm
     expect(parseHeightValue("175m")).toBe(175);

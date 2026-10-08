@@ -67,7 +67,11 @@ export function parseHeightValue(
   heightStr: string | number | null | undefined
 ): number {
   if (heightStr == null) return 0;
-  const cleaned = String(heightStr).trim().toLowerCase();
+  const cleaned = String(heightStr)
+    .trim()
+    .toLowerCase()
+    .replace(/[’‘]/g, "'")
+    .replace(/[“”]/g, '"');
   if (!cleaned) return 0;
 
   // Reject negative heights
